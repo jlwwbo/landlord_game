@@ -4,9 +4,9 @@ use landlord;
 
 create table if not exists login (
 username varchar(50) not null,
-password varchar(50) not null,
+pwd varchar(50) not null,
 userid int not null,
-primary key (username,password)
+primary key (username,pwd)
 );
 
 

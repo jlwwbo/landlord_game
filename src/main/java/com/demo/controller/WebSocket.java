@@ -2,10 +2,11 @@ package com.demo.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.demo.model.user.User;
-//import com.demo.model.user.UserUtil;
+import com.demo.entity.UserEntity;
 import com.demo.service.SearchFriend;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
 import java.sql.Timestamp;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
@@ -14,9 +15,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-
+@Controller
 @ServerEndpoint(value = "/login/{userId}/{password}")
-@Component
 public class WebSocket {
     // 当前在线连接数
     private int onlineCount = 0;
@@ -25,63 +25,30 @@ public class WebSocket {
     private CopyOnWriteArraySet<Session> sessions = new CopyOnWriteArraySet<>();
 
     // session指向用户的map表
-    private HashMap<Session, User> sessionToUser = new HashMap<>();
+    private HashMap<Session, UserEntity> sessionToUserEntity = new HashMap<>();
 
     // 用户指向session的map表
-    private HashMap<User, Session> userToSession = new HashMap<>();
+    private HashMap<Integer, Session> userIdToSession = new HashMap<>();
 
     public Timestamp timestamp;
-//    @Autowired
-//    private LoginMapper loginMapper;
 
-    /*
-     * 连接建立成功调用的方法
-     */
-//    @OnOpen
-//    public void onOpen(@PathParam("userId") String userName,
-//                       @PathParam("password") String password, Session session) {
-//        onlineCount++;
-//        System.out.println(loginMapper);
-//        System.out.println(loginMapper);
-//        try {
-//            //userUtil.login(userName,password);
-//            System.out.println(userUtil.loginMapper);
-//            if(userUtil.login(userName,password) == 0) {
-//                 // 返回失败消息 写在service里面 @do
-//                return;
-//            }
-//        } catch (Exception e) {
-//            System.out.println(e);
-//
-//        }
-//
-//        int userId = UserUtil.getUserId(userName);
-//        User user = new User(session, userId);
-//        sessions.add(session);
-//        sessionToUser.put(session, user);
-//        userToSession.put(user, session);
-//        System.out.println("有新连接加入！当前在线人数为" + onlineCount);
-//
-//
-//        // User 登录之后的service @do
-//
-//
-//    }
+    @Autowired
+    LoginService loginService;
+
+    
     @OnOpen
     public void onOpen(@PathParam("userId") String userName,
                        @PathParam("password") String password, Session session) throws IOException {
-
-        if(userName.equals("1") && password.equals("1")) {
-            int userId = 123;
-            loginRegister(session, userId);
-            successLogin(userName, session, userId);
-        } else if (userName.equals("aaa") && password.equals("aaa")) {
-            int userId = 456;
-            loginRegister(session, userId);
-            successLogin(userName, session, userId);
-        } else {
-            failLogin(userName, session);
+        System.out.println(loginService);
+        loginService.setUserName(userName);
+        loginService.setPwd(password);
+        loginService.setSession(session);
+        System.out.println(loginService.getLoginMapper());
+        boolean success = loginService.login();
+        if(success) {
+            loginRegister(session, loginService.getUserId());
         }
+        loginService.feedback();
     }
 
     /*
@@ -89,32 +56,11 @@ public class WebSocket {
      */
     private void loginRegister(Session session,int userId) {
         onlineCount++;
-        User user = new User(session, userId);
+        UserEntity userEntity = new UserEntity(userId);
         sessions.add(session);
-        sessionToUser.put(session, user);
-        userToSession.put(user, session);
+        sessionToUserEntity.put(session, userEntity);
+        userIdToSession.put(userId, session);
         System.out.println("有新连接加入！当前在线人数为" + onlineCount);
-    }
-
-    /*
-     * 用来生成成功登录消息的util
-     */
-    private void successLogin(String userName, Session session, int userId) throws IOException {
-        JSONObject message = new JSONObject();
-        message.put("type","login");
-        message.put("success", true);
-        message.put("userName", userName);
-        message.put("userId", userId);
-        sendMessage(message.toString(), session);
-    }
-    /*
-     * 用来生成失败登录消息的util
-     */
-    private void failLogin(String userName, Session session) throws IOException {
-        JSONObject message = new JSONObject();
-        message.put("type","login");
-        message.put("success", false);
-        sendMessage(message.toString(), session);
     }
 
     /*
@@ -122,11 +68,11 @@ public class WebSocket {
      */
     @OnClose
     public void onClose(Session session) {
-        User user = sessionToUser.get(session);
-        sessions.remove(session);
-        sessionToUser.remove(session, user);
-        userToSession.remove(user, session);
         onlineCount--;
+        UserEntity userEntity = sessionToUserEntity.get(session);
+        sessions.remove(session);
+        sessionToUserEntity.remove(session, userEntity);
+        userIdToSession.remove(userEntity.userID, session);
         System.out.println("有一连接关闭！当前在线人数为" + onlineCount);
     }
 

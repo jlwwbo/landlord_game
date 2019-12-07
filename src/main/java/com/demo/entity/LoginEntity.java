@@ -2,39 +2,40 @@ package com.demo.entity;
 
 public class LoginEntity {
 
-    public String username;
-    public String password;
+    public String userName;
+    public String pwd;
     public int userId;
 
 
     public String getUserName() {
-        return username;
+        return userName;
     }
 
     public void setUserName(String userName) {
-        this.username = userName;
+        this.userName = userName;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPwd() {
+        return pwd;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
     }
 
-    public int getuserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setuserId(int userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
+
     @Override
     public String toString() {
-        return "{userName=" + username
-                + ", password=" + password
+        return "{userName=" + userName
+                + ", password=" + pwd
                 + ", userId=" + userId + "}";
     }
 }
