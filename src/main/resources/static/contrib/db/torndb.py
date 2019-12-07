@@ -7,14 +7,14 @@ from pymysql.cursors import SSCursor
 
 
 class Connection(object):
-    def __init__(self, host: str, database: str, user: str, password: str):
+    def __init__(self, host: str, database: str, userEntity: str, password: str):
         self.host = host
         self.max_idle_time = float(7 * 3600)
 
         self._db_args = {
             "host": host,
             'database': database,
-            "user": user,
+            "userEntity": userEntity,
             "password": password,
             "port": 3306,
             'charset': 'utf8mb4',

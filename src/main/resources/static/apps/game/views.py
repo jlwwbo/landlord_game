@@ -35,7 +35,7 @@ class SocketHandler(WebSocketHandler):
         logging.info('socket data_received')
 
     def get_current_user(self):
-        return json_decode(self.get_secure_cookie("user"))
+        return json_decode(self.get_secure_cookie("userEntity"))
 
     @property
     def uid(self):
@@ -47,8 +47,8 @@ class SocketHandler(WebSocketHandler):
 
     @authenticated
     def open(self):
-        user = self.current_user
-        self.player = Player(user['uid'], user['username'], self)
+        userEntity = self.current_user
+        self.player = Player(userEntity['uid'], userEntity['username'], self)
         logging.info('SOCKET[%s] OPEN', self.player.uid)
 
     def on_close(self):

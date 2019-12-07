@@ -78,7 +78,7 @@ def sleep(seconds):
 async def countdown(label, length, *, delay=0):
     """Countdown a launch for `length` seconds, waiting `delay` seconds.
 
-    This is what a user would typically write.
+    This is what a userEntity would typically write.
     """
     print(label, 'waiting', delay, 'seconds before starting countdown')
     delta = await sleep(delay)
@@ -93,7 +93,7 @@ async def countdown(label, length, *, delay=0):
 def main():
     """Start the event loop, counting down 3 separate launches.
 
-    This is what a user would typically write.
+    This is what a userEntity would typically write.
     """
     loop = SleepingLoop(countdown('A', 5), countdown('B', 3, delay=2),
                         countdown('C', 4, delay=1))

@@ -1,6 +1,6 @@
 package com.demo.model.room;
 
-import com.demo.entity.User;
+import com.demo.entity.UserEntity;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ public class Room {
 
     public int RoomId;
     public List<Integer> MatchIds;
-    public User[] users;
+    public UserEntity[] users;
 
 
 

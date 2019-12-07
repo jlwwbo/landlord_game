@@ -16,8 +16,8 @@ class IndexHandler(RequestHandler):
     def get(self):
         # if not self.get_cookie("_csrf"):
         self.set_cookie("_csrf", self.xsrf_token)
-        user = self.current_user or ''
-        self.render('poker.html', user=user)
+        userEntity = self.current_user or ''
+        self.render('poker.html', userEntity=userEntity)
 
 
 class LoginHandler(RestfulHandler, JwtMixin):
@@ -38,7 +38,7 @@ class LoginHandler(RestfulHandler, JwtMixin):
             self.send_error(401, reason='Incorrect username or password.')
 
         uid, username = account.get('id'), account.get('username')
-        self.set_secure_cookie('user', json_encode({'uid': uid, 'username': username}))
+        self.set_secure_cookie('userEntity', json_encode({'uid': uid, 'username': username}))
         token = self.jwt_encode({'uid': uid})
         self.write({'token': token, 'username': username})
 
@@ -57,7 +57,7 @@ class SignupHandler(RestfulHandler, JwtMixin):
 
         try:
             uid = await self.create_account(username, email, password)
-            self.set_secure_cookie('user', json_encode({'uid': uid, 'username': username}))
+            self.set_secure_cookie('userEntity', json_encode({'uid': uid, 'username': username}))
             # token = self.jwt_encode({'uid': uid})
             self.write({'uid': uid, 'username': username})
         except pymysql.IntegrityError as e:
@@ -80,5 +80,5 @@ class LogoutHandler(RestfulHandler):
 
     @authenticated
     def post(self):
-        self.clear_cookie('user')
+        self.clear_cookie('userEntity')
         self.redirect(self.get_argument("next", "/"))

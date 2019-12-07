@@ -13,7 +13,7 @@ class AsyncConnection(object):
         self._db_args = {
             'host': kwargs.get('host'),
             'db': kwargs.get('database'),
-            'user': kwargs.get('user'),
+            'userEntity': kwargs.get('userEntity'),
             'password': kwargs.get('password'),
             'port': kwargs.get('port', 3306),
             'minsize': kwargs.get('min_connections', 1),
